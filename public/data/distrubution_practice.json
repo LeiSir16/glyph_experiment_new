@@ -1,0 +1,386 @@
+{
+  "ExperimentB_Demo": [
+    [
+      {
+        "index": "8651a951-b962-11ed-967b-c403a826ff34",
+        "originIndex": "7e991196-b962-11ed-b799-c403a826ff34",
+        "city": "Turkey",
+        "average": 5.803230323366652,
+        "var": 2.0480054888056793,
+        "std": 1.431085423308364,
+        "data": [
+          {
+            "name": "food",
+            "value": 6.831603420687842
+          },
+          {
+            "name": "water",
+            "value": 5.5733185024847955
+          },
+          {
+            "name": "safe",
+            "value": 5.801700097920162
+          },
+          {
+            "name": "education",
+            "value": 6.7548572839709795
+          },
+          {
+            "name": "life",
+            "value": 5.929201881984566
+          },
+          {
+            "name": "gender",
+            "value": 3.4019748945999297
+          },
+          {
+            "name": "income",
+            "value": 3.385562661294608
+          },
+          {
+            "name": "population",
+            "value": 6.798823202714191
+          },
+          {
+            "name": "governance",
+            "value": 7.752030964642785
+          }
+        ]
+      },
+      {
+        "index": "8651a952-b962-11ed-b8d7-c403a826ff34",
+        "originIndex": "7e991196-b962-11ed-b799-c403a826ff34",
+        "city": "Turkey",
+        "average": 5.2203767103889875,
+        "var": 3.9784633249468566,
+        "std": 1.9946085643421008,
+        "data": [
+          {
+            "name": "food",
+            "value": 6.507058619044653
+          },
+          {
+            "name": "water",
+            "value": 6.464225732103545
+          },
+          {
+            "name": "safe",
+            "value": 6.642092943874438
+          },
+          {
+            "name": "education",
+            "value": 6.043486460825627
+          },
+          {
+            "name": "life",
+            "value": 6.14381547173465
+          },
+          {
+            "name": "gender",
+            "value": 3.4272769218309964
+          },
+          {
+            "name": "income",
+            "value": 3.352664925163872
+          },
+          {
+            "name": "population",
+            "value": 7.385068813218178
+          },
+          {
+            "name": "governance",
+            "value": 1.0177005057049322
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_10": [
+    [
+      {
+        "index": "8711badc-b962-11ed-8cb5-c403a826ff34",
+        "originIndex": "7e98eba4-b962-11ed-85cc-c403a826ff34",
+        "city": "Poland",
+        "average": 4.992082069845697,
+        "var": 2.037488222733344,
+        "std": 1.4274061169594812,
+        "data": [
+          {
+            "name": "food",
+            "value": 6.199270193180718
+          },
+          {
+            "name": "water",
+            "value": 5.853013802401769
+          },
+          {
+            "name": "safe",
+            "value": 6.152331698680754
+          },
+          {
+            "name": "education",
+            "value": 6.336483367678648
+          },
+          {
+            "name": "life",
+            "value": 6.365516264289793
+          },
+          {
+            "name": "gender",
+            "value": 4.3107042463038825
+          },
+          {
+            "name": "income",
+            "value": 2.855977234059568
+          },
+          {
+            "name": "population",
+            "value": 4.194956394943336
+          },
+          {
+            "name": "governance",
+            "value": 2.6604854270728
+          }
+        ]
+      },
+      {
+        "index": "8711badd-b962-11ed-96af-c403a826ff34",
+        "originIndex": "7e98eba4-b962-11ed-85cc-c403a826ff34",
+        "city": "Poland",
+        "average": 3.9653033734210825,
+        "var": 3.8210845002061,
+        "std": 1.9547594481690325,
+        "data": [
+          {
+            "name": "food",
+            "value": 3.138401004937256
+          },
+          {
+            "name": "water",
+            "value": 2.7623354724949456
+          },
+          {
+            "name": "safe",
+            "value": 2.947216497189915
+          },
+          {
+            "name": "education",
+            "value": 2.9715266789620807
+          },
+          {
+            "name": "life",
+            "value": 2.90531650736013
+          },
+          {
+            "name": "gender",
+            "value": 1.2646051803779548
+          },
+          {
+            "name": "income",
+            "value": 6.540777079916631
+          },
+          {
+            "name": "population",
+            "value": 7.451668424611611
+          },
+          {
+            "name": "governance",
+            "value": 5.705883514939224
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_20": [
+    [
+      {
+        "index": "871e5a9d-b962-11ed-bc0c-c403a826ff34",
+        "originIndex": "7e98eb69-b962-11ed-94ae-c403a826ff34",
+        "city": "Belgium",
+        "average": 5.574645298653401,
+        "var": 1.9739031106799412,
+        "std": 1.4049566223481567,
+        "data": [
+          {
+            "name": "food",
+            "value": 6.502143891665543
+          },
+          {
+            "name": "water",
+            "value": 6.872528159029745
+          },
+          {
+            "name": "safe",
+            "value": 6.886300376805774
+          },
+          {
+            "name": "education",
+            "value": 6.900508336152853
+          },
+          {
+            "name": "life",
+            "value": 6.89287241153606
+          },
+          {
+            "name": "gender",
+            "value": 3.9304769290574293
+          },
+          {
+            "name": "income",
+            "value": 4.211251682319796
+          },
+          {
+            "name": "population",
+            "value": 3.5370793789921833
+          },
+          {
+            "name": "governance",
+            "value": 4.43864652232123
+          }
+        ]
+      },
+      {
+        "index": "871e5a9e-b962-11ed-b9b0-c403a826ff34",
+        "originIndex": "7e98eb69-b962-11ed-94ae-c403a826ff34",
+        "city": "Belgium",
+        "average": 6.528876748136357,
+        "var": 3.825073668126344,
+        "std": 1.95577955509468,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.378859827760449
+          },
+          {
+            "name": "water",
+            "value": 4.317019282292633
+          },
+          {
+            "name": "safe",
+            "value": 9.41132515659828
+          },
+          {
+            "name": "education",
+            "value": 3.8536421108581242
+          },
+          {
+            "name": "life",
+            "value": 4.339861500879422
+          },
+          {
+            "name": "gender",
+            "value": 6.65216357021446
+          },
+          {
+            "name": "income",
+            "value": 6.8596114432856385
+          },
+          {
+            "name": "population",
+            "value": 6.410924408247457
+          },
+          {
+            "name": "governance",
+            "value": 7.536483433090744
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_40": [
+    [
+      {
+        "index": "875c7eeb-b962-11ed-b834-c403a826ff34",
+        "originIndex": "7e98eb95-b962-11ed-85e6-c403a826ff34",
+        "city": "Luxembourg",
+        "average": 6.33790759163571,
+        "var": 1.363881168105853,
+        "std": 1.1678532305499065,
+        "data": [
+          {
+            "name": "food",
+            "value": 7.546919414575452
+          },
+          {
+            "name": "water",
+            "value": 7.568710783164043
+          },
+          {
+            "name": "safe",
+            "value": 6.4325637170794465
+          },
+          {
+            "name": "education",
+            "value": 6.399016135360101
+          },
+          {
+            "name": "life",
+            "value": 7.751018821261011
+          },
+          {
+            "name": "gender",
+            "value": 5.718594239690875
+          },
+          {
+            "name": "income",
+            "value": 5.153964001858918
+          },
+          {
+            "name": "population",
+            "value": 3.9959315344660062
+          },
+          {
+            "name": "governance",
+            "value": 6.474449677265531
+          }
+        ]
+      },
+      {
+        "index": "875c7eec-b962-11ed-93d8-c403a826ff34",
+        "originIndex": "7e98eb95-b962-11ed-85e6-c403a826ff34",
+        "city": "Luxembourg",
+        "average": 6.445128200290217,
+        "var": 3.1820653061478543,
+        "std": 1.7838344391080283,
+        "data": [
+          {
+            "name": "food",
+            "value": 4.255678665114981
+          },
+          {
+            "name": "water",
+            "value": 5.6946646549151
+          },
+          {
+            "name": "safe",
+            "value": 3.6742021983762716
+          },
+          {
+            "name": "education",
+            "value": 8.191679292239636
+          },
+          {
+            "name": "life",
+            "value": 5.415853932907776
+          },
+          {
+            "name": "gender",
+            "value": 7.596208352664402
+          },
+          {
+            "name": "income",
+            "value": 8.337257799027453
+          },
+          {
+            "name": "population",
+            "value": 5.889496100724479
+          },
+          {
+            "name": "governance",
+            "value": 8.951112806641847
+          }
+        ]
+      }
+    ]
+  ]
+}
