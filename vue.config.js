@@ -8,13 +8,13 @@ module.exports = defineConfig({
     devServer: {
         proxy: {
             // 请求glyph所需数据连接
-            '/glyph-data': {
-                target: 'https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/data',
+            '/glyph_experiment_new': {
+                target: 'https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/glyph_experiment_new',
                 pathRewrite: {
-                    '^/glyph-data': ''
+                    '^/glyph_experiment_new': ''
                 },
                 ws: true,
-                changeOrigin: true
+                changeOrigin: true,
             }
         }
     }

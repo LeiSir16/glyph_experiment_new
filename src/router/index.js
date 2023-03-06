@@ -6,6 +6,7 @@ const userPage = () => import('@/pages/userPage.vue')
 const mainPage = () => import('@/pages/mainPage.vue')
 Vue.use(VueRouter)
 export default new VueRouter({
+    base: '/glyph_experiment_new/',
     routes: [
         // 当路径为/时重定向到用户信息界面
         {

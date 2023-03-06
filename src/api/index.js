@@ -11,7 +11,7 @@ export async function getSSIDistributionDataList(isPractice) {
         url = 'distrubution_practice.json'
     }
     return await api({
-        url: `/glyph-data/${url}`,
+        url: `/glyph_experiment_new/${url}`,
         method: 'get'
     })
 }
@@ -27,7 +27,7 @@ export async function getSSISmallDifferDataList(isPractice) {
         url = 'small_differ_practice.json'
     }
     return await api({
-        url: `/glyph-data/${url}`,
+        url: `/glyph_experiment_new/${url}`,
         method: 'get'
     })
 }
