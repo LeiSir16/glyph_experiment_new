@@ -10,7 +10,7 @@ const api = axios.create({
     //     ? "https://leisir16.github.io/"
     //     : "http://localhost:8080/",
     baseURL: process.env.NODE_ENV === "production"
-        ? "https://wanglei2351482230.gitee.io/glyph_experiment_new/"
+        ? "https://wanglei2351482230.gitee.io/glyph_experiment_new/data/"
         : "http://localhost:8080/",
     // 请求超时时间
     timeout: 5000,
