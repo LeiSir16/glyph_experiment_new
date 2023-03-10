@@ -41,7 +41,7 @@ export default {
   name: "mainPage",
   data() {
     return {
-      activeTab: 'GlyphDesign',
+      activeTab: 'DistributionPractice',
       distributionPractice: {
         isDemo: true,
         // 1分布实验，2微小差值实验
