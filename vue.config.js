@@ -9,8 +9,7 @@ module.exports = defineConfig({
         proxy: {
             // 请求glyph所需数据连接
             '/glyph_experiment_new': {
-                target: 'https://wanglei2351482230.gitee.io/glyph_experiment_new/data/',
-                // target: 'https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/glyph_experiment_new',
+                target: 'https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/glyph_experiment_new',
                 pathRewrite: {
                     '^/glyph_experiment_new': ''
                 },

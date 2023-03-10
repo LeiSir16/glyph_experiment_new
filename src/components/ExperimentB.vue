@@ -99,15 +99,25 @@
         <el-row type="flex" justify="center" align="middle">
           <el-col :span="24">
             <experiment-b-task :experiment-info="experimentInfo">
-              <p slot="task">请从左侧两个可视化图形中选择<span
+              <!-- 数据分布实验任务和微小差值实验任务-->
+              <p slot="task" v-if="experimentSettings.experimentId !== 3">请从左侧两个可视化图形中选择<span
                   style="color: red"
                   v-show="experimentSettings.experimentId===1">数据分布比较均匀的一个【方差最小】</span>
                 <span style="color: red" v-show="experimentSettings.experimentId===2">具有较大【{{
                     curFindAttr.nameCh
                   }}】的图形</span>
               </p>
-              <p slot="explanation" class="task-explanation">
+              <!-- 差值实验的任务显示-->
+              <p slot="task" v-else>
+                请估算左侧两个可视化图形中<span style="color: red">{{ curFindAttr.nameCh }}</span>的差值
+              </p>
+              <p slot="explanation" class="task-explanation" v-if="experimentSettings.experimentId !== 3">
                 说明：请在下方<strong>【单击】</strong>选择图形<strong>【A/B】</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span
+                  v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span
+                  v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>
+              </p>
+              <p slot="explanation" class="task-explanation" v-else>
+                说明：请在下方<strong>【输入】</strong>您估算的结果<strong>(小数点后两位)</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span
                   v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span
                   v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>
               </p>
@@ -200,8 +210,10 @@ export default {
       const dataName = ['ExperimentB_Demo', 'ExperimentB_10', 'ExperimentB_20', 'ExperimentB_40']
       if (this.experimentSettings.experimentId === 1) {
         data = this.experimentSettings.isDemo ? this.$store.state.DistributionPractice : this.$store.state.Distribution
-      } else {
+      } else if (this.experimentSettings.experimentId === 2) {
         data = this.experimentSettings.isDemo ? this.$store.state.SmallDifferPractice : this.$store.state.SmallDiffer
+      } else {
+        data = this.experimentSettings.isDemo ? this.$store.state.AccuracyDifferPractice : this.$store.state.AccuracyDiffer
       }
       if (this.experimentSettings.isDemo) {
         this.allGlyphData = {
@@ -261,6 +273,10 @@ export default {
         this.$set(this.curExperimentInfo, 'allData', this.glyphData)
         if (this.experimentSettings.experimentId === 2) {
           this.curFindAttr = this.findAttrs(this.curCondition, this.glyphData[0].originIndex)
+          // 记录需要查找的属性
+          this.$set(this.curExperimentInfo, 'findAttr', this.curFindAttr.name)
+        } else if (this.experimentSettings.experimentId === 3) {
+          this.curFindAttr = this.findAttrs(this.curCondition, this.glyphData[0].index)
           // 记录需要查找的属性
           this.$set(this.curExperimentInfo, 'findAttr', this.curFindAttr.name)
         }
@@ -334,6 +350,7 @@ export default {
     initialFindAttr() {
       const attr = this.$store.state.ssiColorEncoding
       if (this.experimentSettings.experimentId === 2 && this.allGlyphData) {
+        // 微小差值实验生成属性
         for (const allGlyphDataKey in this.allGlyphData) {
           let chooseAttr = []
           for (const allGlyphDatumElement of this.allGlyphData[allGlyphDataKey]) {
@@ -341,6 +358,30 @@ export default {
             chooseAttr.push({
               ...attr[index],
               id: allGlyphDatumElement[0].originIndex
+            })
+          }
+          this.$set(this.allRandomAttrs, allGlyphDataKey, chooseAttr)
+        }
+      } else if (this.experimentSettings.experimentId === 3 && this.allGlyphData) {
+        // 差值实验随机选择属性
+        for (const allGlyphDataKey in this.allGlyphData) {
+          let chooseAttr = []
+          let threshold = .5
+          for (const allGlyphDatumElement of this.allGlyphData[allGlyphDataKey]) {
+            let index = Math.floor(Math.random() * attr.length)
+            let attrValue_1 = this.getDataAttrNum(allGlyphDatumElement[0], attr[index].name)
+            let attrValue_2 = this.getDataAttrNum(allGlyphDatumElement[1], attr[index].name)
+            let differs = Math.abs(attrValue_2 - attrValue_1)
+            while (differs < threshold) {
+              index = Math.floor(Math.random() * attr.length)
+              attrValue_1 = this.getDataAttrNum(allGlyphDatumElement[0], attr[index].name)
+              attrValue_2 = this.getDataAttrNum(allGlyphDatumElement[1], attr[index].name)
+              differs = Math.abs(attrValue_2 - attrValue_1)
+            }
+            chooseAttr.push({
+              ...attr[index],
+              differs,
+              id: allGlyphDatumElement[0].index
             })
           }
           this.$set(this.allRandomAttrs, allGlyphDataKey, chooseAttr)
@@ -413,19 +454,22 @@ export default {
     // 保存结果按钮事件
     this.$bus.$on('saveChooseResult', d => {
       if (d.isDemo === this.experimentSettings.isDemo && d.experimentId === this.experimentSettings.experimentId) {
-        console.log(d)
         let isRight = false
         if (d.experimentId === 1) {
           isRight = this.distributionIsRight(this.glyphData, d.glyphIndex)
-        } else {
+        } else if (d.experimentId === 2) {
           isRight = this.smallDifferIsRight(this.glyphData, d.glyphIndex, this.curFindAttr)
+        } else {
+          // 对于差值实验isRight记录的是偏差
+          isRight = Number(d.glyphIndex) - this.curFindAttr.differs
         }
         // 保存相关数据
         this.curExperimentInfo = {
           ...this.curExperimentInfo,
           submitTime: d.time,
+          // 对于差值实验这个记录的是差值结果
           chooseIndex: d.glyphIndex,
-          chooseData: this.glyphData[Number(d.glyphIndex)],
+          chooseData: this.experimentSettings.experimentId === 3 ? this.curFindAttr.differs : this.glyphData[Number(d.glyphIndex)],
           isRight,
           stripeValue: this.maxValue / this.curCondition
         }

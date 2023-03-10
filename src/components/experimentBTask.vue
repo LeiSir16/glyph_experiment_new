@@ -1,16 +1,23 @@
 <template>
   <div>
+    <!--任务描述部分-->
     <el-row type="flex" justify="center" align="middle" class="task-des">
       <el-col :span="23" :offset="1">
         <slot name="task"></slot>
       </el-col>
     </el-row>
+    <!--任务解释部分-->
     <el-row type="flex" justify="center" align="middle" class="task-des">
       <el-col :span="23" :offset="1">
         <slot name="explanation"></slot>
       </el-col>
     </el-row>
-    <el-row type="flex" justify="center" align="middle" style="margin-bottom: 15px">
+    <!--实验一二的任务-->
+    <el-row type="flex"
+            justify="center"
+            align="middle"
+            style="margin-bottom: 15px"
+            v-if="this.experimentInfo.experimentId !== 3">
       <el-col :span="5" class="radio-label" :offset="1">
         <span>图形：</span>
       </el-col>
@@ -19,6 +26,24 @@
           <el-radio-button label="0"><span class="glyph-label">A</span></el-radio-button>
           <el-radio-button label="1"><span class="glyph-label">B</span></el-radio-button>
         </el-radio-group>
+      </el-col>
+    </el-row>
+    <!--实验三的任务-->
+    <el-row type="flex"
+            justify="start"
+            align="middle"
+            style="margin-bottom: 15px"
+            v-if="this.experimentInfo.experimentId === 3">
+      <el-col :span="5" class="radio-label" :offset="1">
+        <span>差值：</span>
+      </el-col>
+      <el-col :span="7">
+        <el-input-number
+            v-model="glyphIndex"
+            :min="0"
+            :max="10"
+            :step=".01"
+        ></el-input-number>
       </el-col>
     </el-row>
     <el-row type="flex" justify="center" align="middle" style="margin-bottom: 1vh">
@@ -44,7 +69,7 @@ export default {
   data() {
     return {
       glyphIndex: '',
-      isSaveResult: false
+      isSaveResult: false,
     }
   },
   mixins: [publicFun],
@@ -59,9 +84,13 @@ export default {
     // 保存实验结果
     saveResult() {
       if (this.glyphIndex === '') {
+        let msg = '您还未选择可视化图形!'
+        if (this.experimentInfo.experimentId === 3) {
+          msg = '您还未输入估算结果!'
+        }
         this.$message({
           type: 'error',
-          message: '您还未选择可视化图形!',
+          message: msg,
           duration: 1500
         })
       } else {

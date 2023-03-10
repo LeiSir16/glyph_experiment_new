@@ -1,0 +1,386 @@
+{
+  "ExperimentB_Demo": [
+    [
+      {
+        "index": "5d58a081-bf13-11ed-af76-c403a826ff34",
+        "originIndex": "5d586f41-bf13-11ed-ad17-c403a826ff34",
+        "city": "Dominican Republic",
+        "average": 7.736808829262902,
+        "var": 3.1654358039731583,
+        "std": 1.7791671658315749,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.464615384615383
+          },
+          {
+            "name": "water",
+            "value": 9.6230800945
+          },
+          {
+            "name": "safe",
+            "value": 8.5960299007
+          },
+          {
+            "name": "education",
+            "value": 9.455635899999999
+          },
+          {
+            "name": "life",
+            "value": 8.95045
+          },
+          {
+            "name": "gender",
+            "value": 7.2154
+          },
+          {
+            "name": "income",
+            "value": 6.13
+          },
+          {
+            "name": "population",
+            "value": 5.103916503550731
+          },
+          {
+            "name": "governance",
+            "value": 5.09215168
+          }
+        ]
+      },
+      {
+        "index": "5d58a082-bf13-11ed-8f5a-c403a826ff34",
+        "originIndex": "5d587018-bf13-11ed-99d8-c403a826ff34",
+        "city": "Slovak Republic",
+        "average": 8.660455321585772,
+        "var": 1.4370268824222983,
+        "std": 1.1987605609221126,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.713846153846154
+          },
+          {
+            "name": "water",
+            "value": 9.980876521899999
+          },
+          {
+            "name": "safe",
+            "value": 9.7773628699
+          },
+          {
+            "name": "education",
+            "value": 9.3995146
+          },
+          {
+            "name": "life",
+            "value": 9.574878048780487
+          },
+          {
+            "name": "gender",
+            "value": 7.111000000000001
+          },
+          {
+            "name": "income",
+            "value": 7.885
+          },
+          {
+            "name": "population",
+            "value": 7.737581909845305
+          },
+          {
+            "name": "governance",
+            "value": 6.76403779
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_10": [
+    [
+      {
+        "index": "5d58a083-bf13-11ed-890c-c403a826ff34",
+        "originIndex": "5d587082-bf13-11ed-a37f-c403a826ff34",
+        "city": "Ecuador",
+        "average": 7.737107590669985,
+        "var": 4.715260940439298,
+        "std": 2.171465159849289,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.196923076923076
+          },
+          {
+            "name": "water",
+            "value": 9.519603736599999
+          },
+          {
+            "name": "safe",
+            "value": 9.070044689800001
+          },
+          {
+            "name": "education",
+            "value": 10
+          },
+          {
+            "name": "life",
+            "value": 9.52
+          },
+          {
+            "name": "gender",
+            "value": 7.561
+          },
+          {
+            "name": "income",
+            "value": 6.265
+          },
+          {
+            "name": "population",
+            "value": 3.7288395427068046
+          },
+          {
+            "name": "governance",
+            "value": 4.77255727
+          }
+        ]
+      },
+      {
+        "index": "5d58a084-bf13-11ed-93a5-c403a826ff34",
+        "originIndex": "5d586fda-bf13-11ed-9b2b-c403a826ff34",
+        "city": "Austria",
+        "average": 8.789608856626193,
+        "var": 2.0566177666047327,
+        "std": 1.4340912685755858,
+        "data": [
+          {
+            "name": "food",
+            "value": 10
+          },
+          {
+            "name": "water",
+            "value": 10
+          },
+          {
+            "name": "safe",
+            "value": 9.9977332168
+          },
+          {
+            "name": "education",
+            "value": 10
+          },
+          {
+            "name": "life",
+            "value": 10
+          },
+          {
+            "name": "gender",
+            "value": 7.444
+          },
+          {
+            "name": "income",
+            "value": 7.489
+          },
+          {
+            "name": "population",
+            "value": 6.11428355283574
+          },
+          {
+            "name": "governance",
+            "value": 8.06146294
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_20": [
+    [
+      {
+        "index": "5d58a085-bf13-11ed-aee6-c403a826ff34",
+        "originIndex": "5d587043-bf13-11ed-928e-c403a826ff34",
+        "city": "Indonesia",
+        "average": 7.584237138030097,
+        "var": 3.206451696124659,
+        "std": 1.7906567778680142,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.639999999999999
+          },
+          {
+            "name": "water",
+            "value": 9.1094161762
+          },
+          {
+            "name": "safe",
+            "value": 8.0823727486
+          },
+          {
+            "name": "education",
+            "value": 9.6803335
+          },
+          {
+            "name": "life",
+            "value": 8.6923
+          },
+          {
+            "name": "gender",
+            "value": 7.218999999999999
+          },
+          {
+            "name": "income",
+            "value": 5.734
+          },
+          {
+            "name": "population",
+            "value": 4.911995747470879
+          },
+          {
+            "name": "governance",
+            "value": 5.18871607
+          }
+        ]
+      },
+      {
+        "index": "5d58a086-bf13-11ed-a19f-c403a826ff34",
+        "originIndex": "5d58705c-bf13-11ed-8580-c403a826ff34",
+        "city": "Peru",
+        "average": 7.745881485057942,
+        "var": 3.417230305372217,
+        "std": 1.8485752095525398,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.529230769230768
+          },
+          {
+            "name": "water",
+            "value": 9.2292158224
+          },
+          {
+            "name": "safe",
+            "value": 7.883979715000001
+          },
+          {
+            "name": "education",
+            "value": 10
+          },
+          {
+            "name": "life",
+            "value": 9.442900000000002
+          },
+          {
+            "name": "gender",
+            "value": 7.471
+          },
+          {
+            "name": "income",
+            "value": 5.976999999999999
+          },
+          {
+            "name": "population",
+            "value": 4.889226448890716
+          },
+          {
+            "name": "governance",
+            "value": 5.29038061
+          }
+        ]
+      }
+    ]
+  ],
+  "ExperimentB_40": [
+    [
+      {
+        "index": "5d58a087-bf13-11ed-a14e-c403a826ff34",
+        "originIndex": "5d586feb-bf13-11ed-b0da-c403a826ff34",
+        "city": "El Salvador",
+        "average": 7.902468688738008,
+        "var": 2.005760923629951,
+        "std": 1.4162488918371485,
+        "data": [
+          {
+            "name": "food",
+            "value": 9.316923076923075
+          },
+          {
+            "name": "water",
+            "value": 9.6921899614
+          },
+          {
+            "name": "safe",
+            "value": 8.4697535773
+          },
+          {
+            "name": "education",
+            "value": 8.7718843
+          },
+          {
+            "name": "life",
+            "value": 8.896600000000001
+          },
+          {
+            "name": "gender",
+            "value": 7.318
+          },
+          {
+            "name": "income",
+            "value": 6.607
+          },
+          {
+            "name": "population",
+            "value": 6.950123803019001
+          },
+          {
+            "name": "governance",
+            "value": 5.09974348
+          }
+        ]
+      },
+      {
+        "index": "5d58a088-bf13-11ed-bc08-c403a826ff34",
+        "originIndex": "5d587041-bf13-11ed-8a8c-c403a826ff34",
+        "city": "Hungary",
+        "average": 8.74914565141661,
+        "var": 1.7804206387040848,
+        "std": 1.3343240381197083,
+        "data": [
+          {
+            "name": "food",
+            "value": 10
+          },
+          {
+            "name": "water",
+            "value": 10
+          },
+          {
+            "name": "safe",
+            "value": 9.8191788265
+          },
+          {
+            "name": "education",
+            "value": 10
+          },
+          {
+            "name": "life",
+            "value": 9.372560975609758
+          },
+          {
+            "name": "gender",
+            "value": 7.03
+          },
+          {
+            "name": "income",
+            "value": 7.489
+          },
+          {
+            "name": "population",
+            "value": 8.567088310639726
+          },
+          {
+            "name": "governance",
+            "value": 6.46448275
+          }
+        ]
+      }
+    ]
+  ]
+}

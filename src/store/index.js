@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from 'vuex'
-import {getSSIDistributionDataList, getSSISmallDifferDataList} from "@/api";
+import {getSSIAccuracyDifferDataList, getSSIDistributionDataList, getSSISmallDifferDataList} from "@/api";
 
 Vue.use(Vuex)
 const actions = {
@@ -20,7 +20,8 @@ const actions = {
         // 分片请求数据
         let requestDataPromise = [
             [getSSIDistributionDataList(true), getSSIDistributionDataList(false)],
-            [getSSISmallDifferDataList(true), getSSISmallDifferDataList(false)]
+            [getSSISmallDifferDataList(true), getSSISmallDifferDataList(false)],
+            [getSSIAccuracyDifferDataList(true), getSSIAccuracyDifferDataList(false)]
         ]
         let experimentData = {}
         Promise.all(requestDataPromise[0]).then(res => {
@@ -32,8 +33,14 @@ const actions = {
         }).then(res => {
             experimentData['SmallDifferPractice'] = res[0]
             experimentData['SmallDiffer'] = res[1]
+            return Promise.all(requestDataPromise[2])
         }, err => {
             console.log(`微小差异数据请求失败${err.message}`)
+        }).then(res => {
+            experimentData['AccuracyDifferPractice'] = res[0]
+            experimentData['AccuracyDiffer'] = res[1]
+        }, err => {
+            console.log(`差值实验数据请求失败${err.message}`)
         }).finally(() => {
             // 提交给mutations存储数据
             context.commit('LoadSSIData', experimentData)

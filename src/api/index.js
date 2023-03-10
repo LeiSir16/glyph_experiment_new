@@ -11,8 +11,8 @@ export async function getSSIDistributionDataList(isPractice) {
         url = 'distrubution_practice.json'
     }
     return await api({
-        // url: `/glyph_experiment_new/${url}`,
-        url: `/${url}`,
+        url: `/glyph_experiment_new/${url}`,
+        // url: `/${url}`,
         method: 'get'
     })
 }
@@ -28,8 +28,25 @@ export async function getSSISmallDifferDataList(isPractice) {
         url = 'small_differ_practice.json'
     }
     return await api({
-        // url: `/glyph_experiment_new/${url}`,
-        url: `/${url}`,
+        url: `/glyph_experiment_new/${url}`,
+        // url: `/${url}`,
+        method: 'get'
+    })
+}
+
+/**
+ * 获取差值实验数据
+ * @param isPractice
+ * @return {Promise<axios.AxiosResponse<any>>}
+ */
+export async function getSSIAccuracyDifferDataList(isPractice) {
+    let url = 'acc_differ.json'
+    if (isPractice) {
+        url = 'acc_differ_practice.json'
+    }
+    return await api({
+        url: `/glyph_experiment_new/${url}`,
+        // url: `/${url}`,
         method: 'get'
     })
 }

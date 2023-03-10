@@ -5,17 +5,13 @@ import axios from "axios";
 const api = axios.create({
     // 请求地址中公共部分
     // baseURL: 'http://localhost:8080/',
-    // baseURL: 'https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/data',
-    // baseURL: process.env.NODE_ENV === "production"
-    //     ? "https://leisir16.github.io/"
-    //     : "http://localhost:8080/",
     baseURL: process.env.NODE_ENV === "production"
-        ? "https://wanglei2351482230.gitee.io/glyph_experiment_new/data/"
+        ? "https://leisir-note-image.oss-cn-hangzhou.aliyuncs.com/"
         : "http://localhost:8080/",
     // 请求超时时间
     timeout: 5000,
     // 是否可以带凭证，比如cookie或session
-    withCredentials: true,
+    withCredentials: false,
     headers: {'Cache-Control': 'no-cache', "Content-type": "application/json", 'Access-Control-Allow-Origin': '*'}
 })
 

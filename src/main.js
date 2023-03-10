@@ -22,7 +22,8 @@ import {
     RadioButton,
     Notification,
     MessageBox,
-    Message
+    Message,
+    InputNumber
 } from "element-ui";
 
 Vue.config.productionTip = false
@@ -43,6 +44,7 @@ Vue.use(TabPane)
 Vue.use(Statistic)
 Vue.use(ButtonGroup)
 Vue.use(RadioButton)
+Vue.use(InputNumber)
 new Vue({
     render: h => h(App),
     router,

@@ -35,8 +35,10 @@ export const publicFun = {
         curExperiment(type) {
             if (type === 1) {
                 return 'Distribution'
-            } else {
+            } else if (type === 2) {
                 return 'SmallDiffer'
+            } else {
+                return 'AccuracyDiffer'
             }
         },
         // 数据导出
@@ -57,6 +59,19 @@ export const publicFun = {
                 saveAs(blob, fileName);
                 success();
             }
+        },
+        /**
+         * 获取数据中某个属性的值
+         * @param data  一条数据
+         * @param attr  属性名
+         * @return {*}  属性值
+         */
+        getDataAttrNum(data, attr) {
+            const d = data.data
+            const a = d.filter(item => {
+                return item.name === attr
+            })
+            return a[0].value
         }
     }
 }
