@@ -43,6 +43,7 @@
             :min="0"
             :max="10"
             :step=".01"
+            :precision="2"
         ></el-input-number>
       </el-col>
     </el-row>
