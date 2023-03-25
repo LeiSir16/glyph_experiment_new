@@ -194,25 +194,25 @@ const state = {
         {
             id: 11,
             name: 'renewable',
-            color: "#63daac",
+            color: "#a50f15",
             nameCh: '清洁能源'
         },
         {
             id: 12,
             name: 'GDP',
-            color: "#63daac",
+            color: "#a8f9a0",
             nameCh: '生产总值'
         },
         {
             id: 13,
             name: 'savings',
-            color: "#63daac",
+            color: "#a6cee3",
             nameCh: '节约'
         },
         {
             id: 14,
             name: 'greenhouse',
-            color: "#63daac",
+            color: "#8c96c6",
             nameCh: '绿色房屋'
         }
     ],

@@ -1,10 +1,12 @@
 <template>
-  <div :id="svgId"></div>
+  <div :id="svgId" :ref="svgId"></div>
 </template>
 
 <script>
 import {drawStripeGlyphRandom} from "@/mixin";
 import {saveAs} from 'file-saver'
+import html2canvas from "html2canvas";
+import {canvasToBlob} from 'canvas-to-blob'
 
 export default {
   name: "stripeGlyphDemo",
@@ -14,9 +16,20 @@ export default {
     // 导出svg标签为svg图片
     exportSvg(d) {
       if (d.layout === this.layoutStrategies) {
-        const xml = new XMLSerializer().serializeToString(this.glyphSvg.node())
-        const svgBlob = new Blob([xml], {type: 'image/svg+xml'})
-        saveAs(svgBlob, `${d.svgName}.svg`)
+        // const xml = new XMLSerializer().serializeToString(this.glyphSvg.node())
+        // const svgBlob = new Blob([xml], {type: 'image/svg+xml'})
+        // saveAs(svgBlob, `${d.svgName}.svg`)
+        // console.log(this.$refs[this.svgId])
+        // 将图片导出为png
+        html2canvas(this.$refs[this.svgId]).then(canvas => {
+          canvas.toBlob(blob => {
+            saveAs(blob, `${d.svgName}.png`, 'image/png')
+            this.$message({
+              message: `${d.svgName}.png图片导出成功！`,
+              type: 'success'
+            });
+          })
+        })
       }
     },
     createGlyph() {
