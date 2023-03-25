@@ -10,6 +10,14 @@
                       :experiment-info="experimentInfo"/>
       </el-col>
     </el-row>
+    <el-row type="flex">
+      <el-col :span="2" style="margin-left: 23vw">
+        <h1 class="glyph-name">A</h1>
+      </el-col>
+      <el-col :span="2" style="margin-left: 37vw">
+        <h1 class="glyph-name">B</h1>
+      </el-col>
+    </el-row>
   </div>
 </template>
 

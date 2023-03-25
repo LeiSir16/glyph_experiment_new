@@ -131,10 +131,10 @@ npm run build
         "submitTime": "保存结果时间",
         "endTime": "小实验结束时间（点击下一步的时间）",
         "chooseIndex": "用户估算的差值",
-        "chooseData": "用户估算的差值与正确的值之间的偏差（有正负）",
+        "chooseData": "正确的偏差",
         "allData": "数组，长度为2，glyph编码的数据",
         "findAttr": "任务指定的属性",
-        "isRight": "正确的偏差"
+        "isRight": "用户估算的差值与正确的值之间的偏差（有正负）"
       }
     ]
   }

@@ -2,6 +2,7 @@ import {nanoid} from "nanoid";
 import * as d3 from "d3";
 import dayjs from "dayjs";
 import {saveAs} from 'file-saver'
+import lo from "vue";
 
 export const publicFun = {
     data() {
@@ -119,6 +120,16 @@ export const toolsFun = {
             return r_s(radius);
         },
         /**
+         * 在某个角度范围随机生成条纹中心角度
+         * @param start 开始角度
+         * @param end   结束角度
+         * @param angle 条纹的角度
+         * @return {*}
+         */
+        randomAngle(start, end, angle) {
+            return d3.randomUniform(start + angle / 2, end - angle / 2)()
+        },
+        /**
          * 获取一个扇形区域所能容纳的所有条纹
          * @param meta_data         扇形区域相关信息
          * @param interval_space    左右间隔比例，0.5表示间隔和条纹大小一致
@@ -174,6 +185,82 @@ export const toolsFun = {
                 }
             }
             return strip_info;
+        },
+        candidateIsValid(real_thickness, target_space, form_space, candidate, strips) {
+            for (let i = 0; i < strips.length; i++) {
+                const s = strips[i];
+                const is_radius = (Math.abs(s.inner_r - candidate.inner_r) < (real_thickness + form_space));
+                const s_center = s.start + s.radian / 2;
+                const c_center = candidate.start + candidate.radian / 2;
+                const is_radian = Math.abs(s_center - c_center) < (s.radian / 2 + candidate.radian / 2 + target_space);
+                if (is_radius && is_radian) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        generatePointsBasedOnPoissonDiskDistributions(meta_data, thickness, interval_space, form_space, proportion, num_samples_before_rejection = 30) {
+            const radius_scale = d3.scaleLinear()
+                .domain([0, 1])
+                .range([0, meta_data.outer - meta_data.inner]);
+            const real_thickness = radius_scale(thickness)
+            // 前后间隔表示条纹粗细的比例
+            const real_form_space = real_thickness * form_space;
+            const radius_range = [meta_data.inner + real_thickness / 2, meta_data.outer - real_thickness / 2]
+            // 最大弧长
+            const max_arc = this.cal_arc(meta_data.end - meta_data.start, radius_range[1]);
+            // 最小弧长
+            const min_arc = this.cal_arc(meta_data.end - meta_data.start, radius_range[0]);
+            // 最大的比例
+            const max_proportion = min_arc / max_arc;
+            const real_proportion = Math.min(proportion, max_proportion);
+            // 指定弧长长度
+            const special_arc = real_proportion * max_arc;
+            // 随机生成第一个条纹
+            const first_radius = d3.randomUniform(radius_range[0], radius_range[1])();
+            const first_radian = this.cal_angle(special_arc, first_radius);
+            // 对于边界来说不用考虑左右间距
+            const first_center = this.randomAngle(meta_data.start, meta_data.end, first_radian);
+            const first_strip = {
+                index: 0,
+                inner_r: first_radius - real_thickness / 2,
+                outer_r: first_radius + real_thickness / 2,
+                start: first_center - first_radian / 2,
+                end: first_center + first_radian / 2,
+                radian: first_radian
+            }
+            const strips = [first_strip];
+            const spawn_strips = [first_strip];
+            while (spawn_strips.length > 0) {
+                const spawn_index = Math.floor(Math.random() * spawn_strips.length);
+                const spawn_strip = spawn_strips[spawn_index];
+                let candidate_accepted = false;
+                for (let i = 0; i < num_samples_before_rejection; i++) {
+                    let target_radius = d3.randomUniform(radius_range[0], radius_range[1])();
+                    let target_radian = this.cal_angle(special_arc, target_radius);
+                    let target_center = this.randomAngle(meta_data.start, meta_data.end, target_radian);
+                    // 左右间距表示条纹角度的比例
+                    let target_space = target_radian * interval_space;
+                    let target_strip = {
+                        index: strips.length,
+                        inner_r: target_radius - real_thickness / 2,
+                        outer_r: target_radius + real_thickness / 2,
+                        start: target_center - target_radian / 2,
+                        end: target_center + target_radian / 2,
+                        radian: target_radian
+                    }
+                    if (this.candidateIsValid(real_thickness, target_space, real_form_space, target_strip, strips)) {
+                        strips.push(target_strip);
+                        spawn_strips.push(target_strip);
+                        candidate_accepted = true;
+                        break;
+                    }
+                }
+                if (candidate_accepted === false) {
+                    spawn_strips.splice(spawn_index, 1);
+                }
+            }
+            return strips;
         }
     }
 }
@@ -749,7 +836,7 @@ export const drawGlyph = {
             return peaGlyph;
         },
         drawStripGlyph(svgs, condition, data, experimentInfo, colorEncoding, glyphClickCallback) {
-
+            // console.log(data)
             const vc = this
             // glyph的位置设置
             const position = [condition.glyphSize / 2, condition.glyphSize / 2]
@@ -757,7 +844,7 @@ export const drawGlyph = {
             // 这就是一整个glyph
             const stripeGlyph = svgs.append('g')
                 .attr('class', uniformId)
-                .datum(data);
+                .datum(data)
             // 内半径
             const innerRadius = vc.radius_scale(condition.iRadius, condition.maxRadius, condition.glyphSize);
             // 每一块区域所占的角度
@@ -835,6 +922,623 @@ export const drawGlyph = {
                 circleValue: condition.stripeValue
             }, position);
             return stripeGlyph;
+        }
+    }
+}
+
+export const drawStripeGlyphRandom = {
+    mixins: [toolsFun],
+    data() {
+        return {
+            // 布局策略：1区域规则布局，2随机分布
+            // layoutStrategies: 2,
+            // 编码最大值
+            maxValue: 10,
+            publicGlyphCondition: {
+                // svg的大小
+                glyphSize: 900,
+                // 内半径
+                iRadius: 2.5,
+                // 默认最大半径
+                maxRadius: 10,
+                // 扇形区域之间的间隔
+                sectorInterval: 1.5,
+                // glyph边界离svg的距离
+                svgEdgeDis: 0.1,
+                // 轮廓粗细
+                outlineThickness: 0.7,
+                // 区域分割线颜色
+                divisionColor: 'black',
+                // 区域分割线透明度
+                divisionOpacity: 1,
+                // 背景透明度
+                bgOpacity: 0,
+                // 轮廓的透明度
+                innerOpacity: 1,
+                // 条纹段长度占的比例
+                stripeProportion: .083,
+                // 条纹左右间距
+                stripe_L_R: .15,
+                // 条纹前后间距
+                stripe_B_A: .07,
+                // 隐喻条纹颜色
+                metaphorColor: '#C0C0C0',
+                // 隐喻条纹透明度
+                metaphorOpacity: .3,
+                // glyph条纹段是否编码颜色
+                isEncodingInfo: true,
+                // 编码单一颜色时的颜色
+                encodingInfoColor: 'red',
+                // 条纹段透明度
+                stripeOpacity: 1,
+                // 编码属性的数量
+                attrNum: 9
+            },
+            // 区域均匀分布glyph条件
+            fixedGlyphCondition: {
+                // 分隔的层数
+                layerNum: 6,
+            },
+            randomGlyphCondition: {
+                // 条纹段的粗细
+                stripeThickness: .07,
+                stripeNum: 20
+            },
+            totalGlyphData: {
+                "index": "39f41a8d-b7e6-11ed-9002-c403a826ff34",
+                "originIndex": "39eeeac7-b7e6-11ed-a078-c403a826ff34",
+                "city": "Austria",
+                "average": 7.233509167974615,
+                "var": 0.7078247404108701,
+                "std": 0.8413232080543541,
+                "data": [
+                    {
+                        "name": "food",
+                        "value": 10
+                    },
+                    {
+                        "name": "water",
+                        "value": 7.87415577490147
+                    },
+                    {
+                        "name": "safe",
+                        "value": 5.829557502924567
+                    },
+                    {
+                        "name": "education",
+                        "value": 9.722513530595052
+                    },
+                    {
+                        "name": "life",
+                        "value": 3.517247857453378
+                    },
+                    {
+                        "name": "gender",
+                        "value": 6.129385773669878
+                    },
+                    {
+                        "name": "income",
+                        "value": 6.843201585267538
+                    },
+                    {
+                        "name": "population",
+                        "value": 5.466017626675156
+                    },
+                    {
+                        "name": "governance",
+                        "value": 7.808397310634129
+                    },
+                    {
+                        "name": "health",
+                        "value": 6.808397310634129
+                    },
+                    {
+                        "name": 'biodiversity',
+                        'value': 5.2037809423789705
+                    },
+                    {
+                        "name": 'renewable',
+                        'value': 3.5905700302124055
+                    },
+                    {
+                        "name": 'GDP',
+                        'value': 8.618014862326365
+                    },
+                    {
+                        "name": 'savings',
+                        'value': 9.147414553503802
+                    },
+                    {
+                        "name": 'greenhouse',
+                        'value': 4.618014862326365
+                    }
+                ]
+            },
+            // svg组件
+            glyphSvg: '',
+            allStripes: []
+        }
+    },
+    methods: {
+        // 创建svg
+        createSvg() {
+            const vc = this
+            if (this.glyphSvg) {
+                this.glyphSvg.remove()
+            }
+            this.glyphSvg = d3.select(`#${vc.svgId}`)
+                .append('svg')
+                .attr('width', vc.publicGlyphCondition.glyphSize)
+                .attr('height', vc.publicGlyphCondition.glyphSize)
+        },
+        /**
+         * 绘制轮廓线
+         * @param svgs          要附加的元素
+         * @param id            唯一id
+         * @param condition     控制条件{name,radius,color,thickness,opacity}
+         * @param position
+         * @returns {*}
+         */
+        drawOutline(svgs, id, condition, position) {
+            return svgs.append("g")
+                .attr("class", id + "_" + condition.name)
+                .append("circle")
+                .attr("cx", position[0])
+                .attr("cy", position[1])
+                .attr("r", condition.radius)
+                .attr("fill", "white")
+                .attr("fill-opacity", 0)
+                .attr("stroke", condition.color)
+                .attr("stroke-width", condition.thickness)
+                .attr("stroke-opacity", condition.opacity);
+        },
+        /**
+         * 创建分界线
+         * @param svgs          要附加的svg
+         * @param id            该svg的唯一id
+         * @param condition     控制条件{metaData,division_color,division_opacity,a_sector,sector_interval}
+         * @param position      位置信息
+         */
+        createDivision(svgs, id, condition, position) {
+            const uniformId = id + "_" + "glyph_division";
+            const glyphDivision = svgs.append("g")
+                .attr("class", uniformId)
+                .attr("transform", function () {
+                    return "translate(" + position[0] + "," + position[1] + ")";
+                });
+            const division = glyphDivision.selectAll("line")
+                .data(d => {
+                    return d.data;
+                })
+                .join("line")
+                .attr("x1", 0)
+                .attr("y1", -condition.metaData.inner)
+                .attr("x2", 0)
+                .attr("y2", -condition.metaData.outer)
+                .attr("stroke", condition.division_color)
+                .attr("stroke-width", condition.divisionThickness)
+                .attr("stroke-opacity", condition.division_opacity)
+                .attr("transform", function (d, i) {
+                    return "rotate(" + (-(condition.a_sector) / 2 + i * (condition.a_sector + condition.sector_interval)) + ")";
+                });
+            return glyphDivision;
+        },
+        /**
+         * 创建背景
+         * @param svgs          要附加的元素
+         * @param id            唯一的id
+         * @param condition     控制条件{metaData,encodingColor,bgOpacity,aSector,sectorInterval}
+         * @param position      位置
+         */
+        createBackground(svgs, id, condition, position) {
+            const vc = this
+            const uniformId = id + "_" + "glyph_bg"
+            const glyphBg = svgs.append("g")
+                .attr("class", uniformId)
+                .attr("transform", function () {
+                    return "translate(" + position[0] + "," + position[1] + ")"
+                });
+
+            const bg_sector = glyphBg.selectAll("path")
+                .data(d => {
+                    // console.log(d)
+                    return d.data
+                })
+                .join("path")
+                .attr("d", function (d, i) {
+                    const addAngle = vc.angle_radian(i * (condition.aSector + condition.sectorInterval));
+                    // 创建圆环
+                    const arc = d3.arc()
+                        .innerRadius(condition.metaData.inner)
+                        .outerRadius(condition.metaData.outer)
+                        .startAngle(condition.metaData.start + addAngle)
+                        .endAngle(condition.metaData.end + addAngle);
+                    return arc();
+                })
+                .attr("fill", function (d) {
+                    // 筛选出来指定属性的颜色
+                    const c = condition.encodingColor.filter((item, index) => {
+                        return item.name === d.name;
+                    })
+                    return c[0].color
+                })
+                .attr("fill-opacity", condition.bgOpacity)
+            return glyphBg
+        },
+        /**
+         *  创建隐喻条纹
+         * @param svgs
+         * @param id
+         * @param condition     控制条件{aSector,sectorInterval,sectorTotalStripe,metaphorColor,metaphorOpacity}
+         * @param position
+         */
+        createMetaphor(svgs, id, condition, position) {
+            const glyphMetaphor = svgs.append("g")
+                .attr("class", id + "_" + "glyph_metaphor")
+                .attr("transform", function () {
+                    return "translate(" + position[0] + "," + position[1] + ")";
+                })
+                .selectAll("g")
+                .data((d) => {
+                    return d.data;
+                })
+                .join("g")
+                .attr("class", function (d) {
+                    return "metaphor" + "_" + id + "_" + d.name;
+                })
+                .attr("transform", function (d, i) {
+                    return "rotate(" + i * (condition.aSector + condition.sectorInterval) + ")";
+                });
+            const glyph_metaphor_stripe = glyphMetaphor.selectAll("path")
+                .data(condition.sectorTotalStripe)
+                .join("path")
+                .attr("d", function (d) {
+                    let arc = d3.arc()
+                        .innerRadius(d.inner_r)
+                        .outerRadius(d.outer_r)
+                        .startAngle(d.start)
+                        .endAngle(d.end);
+                    return arc();
+                })
+                .attr("fill", function () {
+                    return condition.metaphorColor;
+                })
+                .attr("fill-opacity", condition.metaphorOpacity);
+            return glyphMetaphor;
+        },
+        /**
+         *
+         * @param svgs
+         * @param id
+         * @param condition     控制条件{aSector, sectorInterval, stripeNum, sectorTotalStripe, color, isEncodingInfo, encodingInfoColor,stripeOpacity,experimentInfo,circleValue}
+         * @param position
+         */
+        createContent(svgs, id, condition, position) {
+            const glyphContent = svgs.append("g")
+                .attr("class", id + "_" + "glyph_content")
+                .attr("transform", function () {
+                    return "translate(" + position[0] + "," + position[1] + ")";
+                })
+                .selectAll("g")
+                .data(d => {
+                    return d.data;
+                })
+                .join("g")
+                .attr("class", function (d) {
+                    return "content" + "_" + id + "_" + d.name;
+                })
+                .attr("transform", function (d, i) {
+                    return "rotate(" + i * (condition.aSector + condition.sectorInterval) + ")";
+                });
+
+            const glyph_content_stripe = glyphContent.selectAll("path")
+                .data(function (d) {
+                    // 每个条纹编码的大小
+                    const aValue = condition.circleValue
+                    const num = Math.ceil(d.value / aValue);
+                    return condition.sectorTotalStripe.slice(0, num);
+                })
+                .join("path")
+                .attr("d", function (d, i) {
+                    const ve = d3.select(this.parentNode).data()[0];
+                    const aValue = condition.circleValue
+                    const num = Math.floor(ve.value / aValue);
+                    const arcs = d3.arc()
+                        .innerRadius(d.inner_r)
+                        .outerRadius(d.outer_r)
+                        .startAngle(d.start);
+                    if (i === num) {
+                        let remain = ve.value - num * aValue;
+                        let radian_scale = d3.scaleLinear()
+                            .domain([0, aValue])
+                            .range([d.start, d.end]);
+                        arcs.endAngle(radian_scale(remain));
+                    } else {
+                        arcs.endAngle(d.end);
+                    }
+                    return arcs();
+                })
+                .attr("fill", function () {
+                    let tmp_data = d3.select(this.parentNode).data()[0];
+                    // 筛选出来指定属性的颜色
+                    let c = condition.color.filter((item, index) => {
+                        return item.name === tmp_data.name;
+                    });
+                    return condition.isEncodingInfo ? c[0].color : condition.encodingInfoColor;
+                })
+                .attr("fill-opacity", condition.stripeOpacity);
+            return glyphContent;
+        },
+        /**
+         *
+         * @param drawSvg
+         * @param uniformId
+         * @param condition {aSector, sectorInterval, circleValue, sectorTotalStripe, color, metaphorColor, isEncodingInfo, encodingInfoColor, metaphorOpacity, stripeOpacity}
+         * @param position
+         */
+        createRandomContent(drawSvg, uniformId, condition, position) {
+            const vc = this;
+            const glyphRandom = drawSvg.append("g")
+                .attr("class", `${uniformId}_glyph_content`)
+                .attr("transform", function () {
+                    return `translate(${position[0]},${position[1]})`
+                })
+                .selectAll("g")
+                .data(d => {
+                    return d.data
+                })
+                .join("g")
+                .attr("class", function (d) {
+                    return `content_${uniformId}_${d.name}`
+                })
+                .attr("transform", function (d, i) {
+                    return "rotate(" + i * (condition.aSector + condition.sectorInterval) + ")"
+                });
+
+            const glyphRandomStripe = glyphRandom.selectAll("path")
+                .data(d => {
+                    const aValue = condition.circleValue
+                    const num = Math.ceil(d.value / aValue)
+                    // 深拷贝
+                    let stripes = condition.sectorTotalStripe.slice(0, num)
+                    if (d.value !== 0 && d.value % aValue !== 0) {
+                        stripes = [stripes[0], ...stripes]
+                    }
+                    return stripes
+                })
+                .join("path")
+                .attr("d", function (d, i) {
+                    const ve = d3.select(this.parentNode).data()[0]
+                    const aValue = condition.circleValue
+                    const num = Math.floor(ve.value / aValue)
+                    const arcs = d3.arc()
+                        .innerRadius(d.inner_r)
+                        .outerRadius(d.outer_r)
+                        .startAngle(d.start)
+                    if (i === 1) {
+                        // 带有颜色的是不完整的条纹
+                        const remain = ve.value - num * aValue;
+                        const radian_scale = d3.scaleLinear()
+                            .domain([0, aValue])
+                            .range([d.start, d.end])
+                        arcs.endAngle(radian_scale(remain))
+                    } else {
+                        arcs.endAngle(d.end)
+                    }
+                    return arcs()
+                })
+                .attr("fill", function (d, i) {
+                    const tmp_data = d3.select(this.parentNode).data()[0];
+                    const ve = tmp_data.value;
+                    const num = Math.floor(ve / condition.circleValue);
+                    const c = condition.color.filter((item, index) => {
+                        return item.name === tmp_data.name;
+                    });
+                    if (num * condition.circleValue < ve) {
+                        if (i === 0) {
+                            // 用于隐喻条纹
+                            return condition.metaphorColor;
+                        }
+                        return condition.isEncodingInfo ? c[0].color : condition.encodingInfoColor;
+                    }
+                    return condition.isEncodingInfo ? c[0].color : condition.encodingInfoColor;
+                })
+                .attr("fill-opacity", function (d, i) {
+                    const tmp_data = d3.select(this.parentNode).data()[0];
+                    const ve = tmp_data.value;
+                    const num = Math.floor(ve / condition.circleValue);
+                    if (num * condition.circleValue < ve) {
+                        if (i === 0) {
+                            // 用于隐喻条纹
+                            return condition.metaphorOpacity;
+                        }
+                        return condition.stripeOpacity;
+                    }
+                    return condition.stripeOpacity;
+                })
+                .attr("class", function (d, i) {
+                    const tmp_data = d3.select(this.parentNode).data()[0];
+                    const ve = tmp_data.value;
+                    const num = Math.floor(ve / condition.circleValue);
+                    if (num * condition.circleValue < ve) {
+                        if (i === 0) {
+                            // 用于隐喻条纹
+                            return "path_metaphor";
+                        }
+                        return "";
+                    }
+                    return "";
+                })
+            return glyphRandom
+        },
+        /**
+         * 创建两种glyph的公共组成部分
+         * @param appendSvg 要附加的glyph
+         * @param uniformId id
+         */
+        createPublicComponent(appendSvg, uniformId) {
+            const vc = this
+            // 创建内轮廓
+            vc.drawOutline(appendSvg, uniformId, {
+                name: 'inner',
+                radius: vc.innerRadius,
+                color: vc.publicGlyphCondition.divisionColor,
+                thickness: vc.publicGlyphCondition.outlineThickness,
+                opacity: vc.publicGlyphCondition.innerOpacity
+            }, vc.glyphPosition);
+            // 创建外轮廓
+            vc.drawOutline(appendSvg, uniformId, {
+                name: 'outer',
+                radius: vc.outerRadius,
+                color: vc.publicGlyphCondition.divisionColor,
+                thickness: vc.publicGlyphCondition.outlineThickness,
+                opacity: vc.publicGlyphCondition.innerOpacity
+            }, vc.glyphPosition);
+            // 创建每个区域的分界线
+            vc.createDivision(appendSvg, uniformId, {
+                metaData: vc.metaData,
+                division_color: vc.publicGlyphCondition.divisionColor,
+                division_opacity: vc.publicGlyphCondition.divisionOpacity,
+                a_sector: vc.aSector,
+                sector_interval: vc.publicGlyphCondition.sectorInterval,
+                divisionThickness: vc.publicGlyphCondition.outlineThickness
+            }, vc.glyphPosition);
+            // 创建背景
+            vc.createBackground(appendSvg, uniformId, {
+                metaData: vc.metaData,
+                encodingColor: vc.colorEncoding,
+                bgOpacity: vc.publicGlyphCondition.bgOpacity,
+                aSector: vc.aSector,
+                sectorInterval: vc.publicGlyphCondition.sectorInterval
+            }, vc.glyphPosition);
+
+        },
+        // 创建规则分布的glyph
+        createFixedGlyph() {
+            const vc = this
+            const uniformId = `fixed-${nanoid()}`
+            const stripeG = this.glyphSvg.append('g')
+                .attr('class', uniformId)
+                .datum(vc.glyphData);
+            // 创建组成的公共部分
+            this.createPublicComponent(stripeG, uniformId)
+            // 创建隐喻条纹
+            this.createMetaphor(stripeG, uniformId, {
+                aSector: vc.aSector,
+                sectorInterval: vc.publicGlyphCondition.sectorInterval,
+                sectorTotalStripe: vc.fixedSectorTotalStripe,
+                metaphorColor: vc.publicGlyphCondition.metaphorColor,
+                metaphorOpacity: vc.publicGlyphCondition.metaphorOpacity,
+            }, vc.glyphPosition)
+            // 创建填充条纹
+            this.createContent(stripeG, uniformId, {
+                aSector: vc.aSector,
+                sectorInterval: vc.publicGlyphCondition.sectorInterval,
+                sectorTotalStripe: vc.fixedSectorTotalStripe,
+                color: vc.colorEncoding,
+                isEncodingInfo: vc.publicGlyphCondition.isEncodingInfo,
+                encodingInfoColor: vc.publicGlyphCondition.encodingInfoColor,
+                stripeOpacity: vc.publicGlyphCondition.stripeOpacity,
+                circleValue: vc.stripeValue
+            }, vc.glyphPosition);
+        },
+        // 创建随机分布的glyph
+        createRandomGlyph() {
+            const vc = this
+            const uniformId = `random-${nanoid()}`
+            const stripeG = this.glyphSvg.append('g')
+                .attr('class', uniformId)
+                .datum(vc.glyphData);
+            // 创建组成的公共部分
+            this.createPublicComponent(stripeG, uniformId)
+            this.createRandomContent(stripeG, uniformId, {
+                aSector: vc.aSector,
+                sectorInterval: vc.publicGlyphCondition.sectorInterval,
+                sectorTotalStripe: vc.randomSectorTotalStripe,
+                color: vc.colorEncoding,
+                metaphorColor: vc.publicGlyphCondition.metaphorColor,
+                metaphorOpacity: vc.publicGlyphCondition.metaphorOpacity,
+                isEncodingInfo: vc.publicGlyphCondition.isEncodingInfo,
+                encodingInfoColor: vc.publicGlyphCondition.encodingInfoColor,
+                stripeOpacity: vc.publicGlyphCondition.stripeOpacity,
+                circleValue: vc.stripeValue
+            }, vc.glyphPosition)
+        }
+    },
+    computed: {
+        // 设置svg的id
+        svgId() {
+            const pre = this.layoutStrategies === 1 ? "fixed" : "random"
+            return `${pre}_${nanoid()}`
+        },
+        glyphPosition() {
+            return [this.publicGlyphCondition.glyphSize / 2, this.publicGlyphCondition.glyphSize / 2]
+        },
+        // 每一个区域所占的角度
+        aSector() {
+            return 360 / this.glyphData.data.length - this.publicGlyphCondition.sectorInterval
+        },
+        // 内轮廓半径
+        innerRadius() {
+            return this.radius_scale(this.publicGlyphCondition.iRadius, this.publicGlyphCondition.maxRadius, this.publicGlyphCondition.glyphSize)
+        },
+        // 外轮廓半径
+        outerRadius() {
+            // 外轮廓半径会距离svg边界有svgEdgeDis距离
+            return this.radius_scale(this.publicGlyphCondition.maxRadius - this.publicGlyphCondition.svgEdgeDis, this.publicGlyphCondition.maxRadius, this.publicGlyphCondition.glyphSize)
+        },
+        // 计算一些元数据
+        metaData() {
+            return {
+                inner: this.innerRadius + this.publicGlyphCondition.outlineThickness / 2,
+                outer: this.outerRadius - this.publicGlyphCondition.outlineThickness / 2,
+                start: this.angle_radian(this.publicGlyphCondition.sectorInterval / 2 - this.aSector / 2),
+                end: this.angle_radian(this.publicGlyphCondition.sectorInterval / 2 - this.aSector / 2 + this.aSector)
+            }
+        },
+        // 条纹段在区域内均匀分布时所有的条纹段
+        fixedSectorTotalStripe() {
+            return this.cal_total_strip(this.metaData, this.publicGlyphCondition.stripe_L_R, this.publicGlyphCondition.stripe_B_A, this.publicGlyphCondition.stripeProportion, this.fixedGlyphCondition.layerNum)
+        },
+        // 条纹段在区域内随机分布时所有的条纹段
+        randomSectorTotalStripe() {
+            this.allStripes = this.generatePointsBasedOnPoissonDiskDistributions(this.metaData, this.randomGlyphCondition.stripeThickness, this.publicGlyphCondition.stripe_L_R, this.publicGlyphCondition.stripe_B_A, this.publicGlyphCondition.stripeProportion)
+            const tmp = [...this.allStripes]
+            // 根据条件显示指定数量的条纹段
+            if (tmp.length >= this.randomGlyphCondition.stripeNum) {
+                return tmp.slice(0, this.randomGlyphCondition.stripeNum)
+            } else {
+                return tmp
+            }
+        },
+        // 每个条纹段编码的值的大小
+        stripeValue() {
+            if (this.layoutStrategies === 1) {
+                return this.maxValue / this.fixedSectorTotalStripe.length
+            } else {
+                return this.maxValue / this.randomSectorTotalStripe.length
+            }
+        },
+        colorEncoding() {
+            const colors = this.$store.state.ssiColorEncodingDemo
+            const num = Math.min(this.publicGlyphCondition.attrNum, colors.length)
+            return [...colors.slice(0, num)]
+        },
+        glyphData() {
+            const d = this.totalGlyphData.data
+            const num = Math.min(this.publicGlyphCondition.attrNum, d.length)
+            return {
+                ...this.totalGlyphData,
+                data: [...d.slice(0, num)]
+            }
+        }
+    },
+    watch: {
+        allStripes: {
+            deep: true,
+            handler(newVal, oldVal) {
+                this.$bus.$emit('updateStripeNum', newVal)
+            }
         }
     }
 }

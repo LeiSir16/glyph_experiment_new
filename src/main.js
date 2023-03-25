@@ -23,11 +23,17 @@ import {
     Notification,
     MessageBox,
     Message,
-    InputNumber
+    InputNumber,
+    Slider,
+    Switch,
+    ColorPicker
 } from "element-ui";
 
 Vue.config.productionTip = false
 Vue.use(Button)
+Vue.use(Slider)
+Vue.use(ColorPicker)
+Vue.use(Switch)
 Vue.use(Form)
 Vue.use(FormItem)
 Vue.use(Container)

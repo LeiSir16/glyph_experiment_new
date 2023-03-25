@@ -23,4 +23,7 @@ export default {
 </script>
 
 <style>
+*{
+  font-family: "Gotham Black";
+}
 </style>

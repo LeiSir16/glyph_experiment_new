@@ -64,6 +64,71 @@ const state = {
             id: 0,
             name: 'food',
             color: "#e41a1c",
+            // nameCh: '营养不良指数'
+            nameCh: 'Sufficient Food'
+        },
+        {
+            id: 1,
+            name: 'water',
+            color: "#377eb8",
+            // nameCh: '基础供水服务指数'
+            nameCh: 'Sufficient Drinking Water'
+        },
+        {
+            id: 2,
+            name: 'safe',
+            color: "#bf66eb",
+            // nameCh: '基础卫生服务指数'
+            nameCh: 'Safe Sanitation'
+        },
+        {
+            id: 3,
+            name: 'education',
+            color: "#4daf4a",
+            // nameCh: '教育指数'
+            nameCh: 'Education'
+        },
+        {
+            id: 4,
+            name: 'life',
+            color: "#984ea3",
+            // nameCh: '健康生活指数'
+            nameCh: 'Healthy Life'
+        },
+        {
+            id: 5,
+            name: 'gender',
+            color: "#ff7f00",
+            // nameCh: '性别平等指数'
+            nameCh: 'Gender Equality'
+        },
+        {
+            id: 6,
+            name: 'income',
+            color: "#fdbf6f",
+            // nameCh: '收入分配指数'
+            nameCh: 'Income Distribution'
+        },
+        {
+            id: 7,
+            name: 'population',
+            color: "#a65628",
+            // nameCh: '人口增长指数'
+            nameCh: 'Population Growth'
+        },
+        {
+            id: 8,
+            name: 'governance',
+            color: "#f781bf",
+            // nameCh: '政府治理水平指数'
+            nameCh: 'Good Governance'
+        }
+    ],
+    ssiColorEncodingDemo: [
+        {
+            id: 0,
+            name: 'food',
+            color: "#e41a1c",
             nameCh: '营养不良指数'
         },
         {
@@ -113,6 +178,42 @@ const state = {
             name: 'governance',
             color: "#f781bf",
             nameCh: '政府治理水平指数'
+        },
+        {
+            id: 9,
+            name: 'health',
+            color: "#63daac",
+            nameCh: '健康'
+        },
+        {
+            id: 10,
+            name: 'biodiversity',
+            color: "#e9baa5",
+            nameCh: '生态'
+        },
+        {
+            id: 11,
+            name: 'renewable',
+            color: "#63daac",
+            nameCh: '清洁能源'
+        },
+        {
+            id: 12,
+            name: 'GDP',
+            color: "#63daac",
+            nameCh: '生产总值'
+        },
+        {
+            id: 13,
+            name: 'savings',
+            color: "#63daac",
+            nameCh: '节约'
+        },
+        {
+            id: 14,
+            name: 'greenhouse',
+            color: "#63daac",
+            nameCh: '绿色房屋'
         }
     ],
     // 可视化介绍部分展示的数据

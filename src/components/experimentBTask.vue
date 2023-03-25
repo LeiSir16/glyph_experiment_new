@@ -19,7 +19,7 @@
             style="margin-bottom: 15px"
             v-if="this.experimentInfo.experimentId !== 3">
       <el-col :span="5" class="radio-label" :offset="1">
-        <span>图形：</span>
+        <span>Graph：</span>
       </el-col>
       <el-col :span="16" :offset="2">
         <el-radio-group v-model="glyphIndex">
@@ -34,8 +34,8 @@
             align="middle"
             style="margin-bottom: 15px"
             v-if="this.experimentInfo.experimentId === 3">
-      <el-col :span="5" class="radio-label" :offset="1">
-        <span>差值：</span>
+      <el-col :span="7" class="radio-label" :offset="1">
+        <span>Difference：</span>
       </el-col>
       <el-col :span="7">
         <el-input-number
@@ -49,12 +49,12 @@
     </el-row>
     <el-row type="flex" justify="center" align="middle" style="margin-bottom: 1vh">
       <el-col :span="5" class="text-center" :offset="3">
-        <el-button type="primary" @click="saveResult">保存结果</el-button>
+        <el-button type="primary" @click="saveResult">Save</el-button>
       </el-col>
       <el-col :span="12" class="text-center">
-        <el-button type="success" @click="nextStep" v-show="!isShowSubmitBtn" :disabled="!isSaveResult">下一步<i
+        <el-button type="success" @click="nextStep" v-show="!isShowSubmitBtn" :disabled="!isSaveResult">Next<i
             class="el-icon-arrow-right el-icon--right"></i></el-button>
-        <el-button type="danger" @click="submitResult" v-show="isShowSubmitBtn" :disabled="!isSaveResult">提交结果
+        <el-button type="danger" @click="submitResult" v-show="isShowSubmitBtn" :disabled="!isSaveResult">Export
         </el-button>
       </el-col>
     </el-row>

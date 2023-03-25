@@ -36,10 +36,10 @@
         </el-row>
         <!-- 实验计数部分-->
         <el-row type="flex" justify="center" align="middle">
-          <el-col :span="3">
+          <el-col :span="5">
             <el-statistic>
               <span slot="title" class="static-title">
-                已完成实验数
+                Experiments Completed
               </span>
               <span slot="formatter" class="experiment-num">
                 {{ curActive }}
@@ -49,7 +49,7 @@
           <el-col :span="3">
             <el-statistic>
               <span slot="title" class="static-title">
-                实验总数
+                Total Experiments
               </span>
               <span slot="formatter" class="experiment-num">
                 {{ totalExperimentNum }}
@@ -69,7 +69,7 @@
         <!--可视化图例部分-->
         <el-row type="flex" justify="center" align="middle">
           <el-col :span="24">
-            <h2 class="show-center">图例</h2>
+            <h2 class="show-center">Legend</h2>
           </el-col>
         </el-row>
         <el-row type="flex" justify="center" align="middle">
@@ -81,7 +81,7 @@
         <!--可视化解释部分-->
         <el-row type="flex" justify="center" align="middle">
           <el-col :span="24">
-            <h2 class="show-center">可视化解释</h2>
+            <h2 class="show-center">Description</h2>
           </el-col>
         </el-row>
         <el-row type="flex" justify="center" align="middle">
@@ -93,34 +93,44 @@
         <!-- 实验任务部分-->
         <el-row type="flex" justify="center" align="middle">
           <el-col :span="24">
-            <h2 class="show-center">实验任务</h2>
+            <h2 class="show-center">Task</h2>
           </el-col>
         </el-row>
         <el-row type="flex" justify="center" align="middle">
           <el-col :span="24">
             <experiment-b-task :experiment-info="experimentInfo">
               <!-- 数据分布实验任务和微小差值实验任务-->
-              <p slot="task" v-if="experimentSettings.experimentId !== 3">请从左侧两个可视化图形中选择<span
+              <p slot="task" v-if="experimentSettings.experimentId !== 3">
+                <!--                请从左侧两个可视化图形中选择<span-->
+                <!--                  style="color: red"-->
+                <!--                  v-show="experimentSettings.experimentId===1">数据分布比较均匀的一个【方差最小】</span>-->
+                <!--                <span style="color: red" v-show="experimentSettings.experimentId===2">具有较大【{{-->
+                <!--                    curFindAttr.nameCh-->
+                <!--                  }}】的图形</span>-->
+
+                Please select the visualization with<span
                   style="color: red"
-                  v-show="experimentSettings.experimentId===1">数据分布比较均匀的一个【方差最小】</span>
-                <span style="color: red" v-show="experimentSettings.experimentId===2">具有较大【{{
+                  v-show="experimentSettings.experimentId===1"> a more uniform data distribution【smaller variance】</span>
+                <span style="color: red" v-show="experimentSettings.experimentId===2"> a higher value for【{{
                     curFindAttr.nameCh
-                  }}】的图形</span>
+                  }}】</span>from the two visualizations on the left.
               </p>
               <!-- 差值实验的任务显示-->
               <p slot="task" v-else>
-                请估算左侧两个可视化图形中<span style="color: red">{{ curFindAttr.nameCh }}</span>的差值
+                Please estimate the difference in <span style="color: red">{{ curFindAttr.nameCh }}</span> between the
+                two visualizations on the left.
+                <!-- 请估算左侧两个可视化图形中<span style="color: red">{{ curFindAttr.nameCh }}</span>的差值-->
               </p>
-              <p slot="explanation" class="task-explanation" v-if="experimentSettings.experimentId !== 3">
-                说明：请在下方<strong>【单击】</strong>选择图形<strong>【A/B】</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span
-                  v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span
-                  v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>
-              </p>
-              <p slot="explanation" class="task-explanation" v-else>
-                说明：请在下方<strong>【输入】</strong>您估算的结果<strong>(小数点后两位)</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span
-                  v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span
-                  v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>
-              </p>
+              <!--              <p slot="explanation" class="task-explanation" v-if="experimentSettings.experimentId !== 3">-->
+              <!--                说明：请在下方<strong>【单击】</strong>选择图形<strong>【A/B】</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span-->
+              <!--                  v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span-->
+              <!--                  v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>-->
+              <!--              </p>-->
+              <!--              <p slot="explanation" class="task-explanation" v-else>-->
+              <!--                说明：请在下方<strong>【输入】</strong>您估算的结果<strong>(小数点后两位)</strong>后点击<strong>【保存结果】</strong>按钮进行保存，保存成功后即可点击<span-->
+              <!--                  v-show="totalExperimentNum!==curActive"><strong>【下一步】</strong>按钮进行下一个实验</span><span-->
+              <!--                  v-show="totalExperimentNum===curActive"><strong>【提交结果】</strong>按钮导出实验结果</span>-->
+              <!--              </p>-->
             </experiment-b-task>
           </el-col>
         </el-row>
@@ -561,7 +571,6 @@ export default {
         this.$set(this.curExperimentInfo, 'glyphType', this.curShowGlyph)
         // 随机生成数据和选择当前显示的condition
         this.randomChooseData()
-        // console.log(this.glyphData)
         this.changeGlyphLayout(this.curShowGlyph, this.curCondition)
       }
     }
