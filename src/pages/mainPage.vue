@@ -29,14 +29,14 @@
         <span slot="label" class="tab-item-title">Task 3(Formal)</span>
         <ExperimentB :experiment-settings="distribution"/>
       </el-tab-pane>
-<!--      <el-tab-pane name="StripeGlyphEvenDemo">-->
-<!--        <span slot="label" class="tab-item-title">StripeGlyph规则分布</span>-->
-<!--        <glyph-demo :layout-strategies="1"/>-->
-<!--      </el-tab-pane>-->
-<!--      <el-tab-pane name="StripeGlyphRandomDemo">-->
-<!--        <span slot="label" class="tab-item-title">StripeGlyph随机分布</span>-->
-<!--        <glyph-demo :layout-strategies="2"/>-->
-<!--      </el-tab-pane>-->
+      <el-tab-pane name="StripeGlyphEvenDemo">
+        <span slot="label" class="tab-item-title">StripeGlyph规则分布</span>
+        <glyph-demo :layout-strategies="1"/>
+      </el-tab-pane>
+      <el-tab-pane name="StripeGlyphRandomDemo">
+        <span slot="label" class="tab-item-title">StripeGlyph随机分布</span>
+        <glyph-demo :layout-strategies="2"/>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
